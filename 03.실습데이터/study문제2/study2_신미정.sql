@@ -1,50 +1,61 @@
-----------6¹ø ¹®Á¦ ---------------------------------------------------
- -- ÀüÃ¼ »óÇ°º° '»óÇ°ÀÌ¸§', '»óÇ°¸ÅÃâ' À» ³»¸²Â÷¼øÀ¸·Î ±¸ÇÏ½Ã¿À 
+----------6ë²ˆ ë¬¸ì œ ---------------------------------------------------
+ -- ì „ì²´ ìƒí’ˆë³„ 'ìƒí’ˆì´ë¦„', 'ìƒí’ˆë§¤ì¶œ' ì„ ë‚´ë¦¼ì°¨ìˆœìœ¼ë¡œ êµ¬í•˜ì‹œì˜¤ 
 -----------------------------------------------------------------------------
-SELECT i.product_name as »óÇ°ÀÌ¸§
-     , SUM(o.sales) as »óÇ°¸ÅÃâ
+SELECT i.product_name as ìƒí’ˆì´ë¦„
+     , SUM(o.sales) as ìƒí’ˆë§¤ì¶œ
 FROM item i, order_info o
 WHERE i.item_id = o.item_id
 GROUP BY i.product_name
 ORDER BY 2 DESC;
 
----------- 7¹ø ¹®Á¦ ---------------------------------------------------
--- ¸ðµç»óÇ°ÀÇ ¿ùº° ¸ÅÃâ¾×À» ±¸ÇÏ½Ã¿À 
--- ¸ÅÃâ¿ù, SPECIAL_SET, PASTA, PIZZA, SEA_FOOD, STEAK, SALAD_BAR, SALAD, SANDWICH, WINE, JUICE
+---------- 7ë²ˆ ë¬¸ì œ ---------------------------------------------------
+-- ëª¨ë“ ìƒí’ˆì˜ ì›”ë³„ ë§¤ì¶œì•¡ì„ êµ¬í•˜ì‹œì˜¤ 
+-- ë§¤ì¶œì›”, SPECIAL_SET, PASTA, PIZZA, SEA_FOOD, STEAK, SALAD_BAR, SALAD, SANDWICH, WINE, JUICE
 ----------------------------------------------------------------------------
-SELECT o.¸ÅÃâ¿ù, sum(o.sales), i.product_name
-FROM (SELECT item_id, sales, TO_CHAR(TO_DATE(reserv_no,'YYYYMMDDSS'),'YYYYMM') as ¸ÅÃâ¿ù
+SELECT o.ë§¤ì¶œì›”
+     , SUM(CASE WHEN i.product_name = 'SPECIAL_SET' THEN o.sales ELSE 0 END) AS SPECIAL_SET,
+       SUM(CASE WHEN i.product_name = 'PASTA' THEN o.sales ELSE 0 END) AS PASTA,
+       SUM(CASE WHEN i.product_name = 'PIZZA' THEN o.sales ELSE 0 END) AS PIZZA,
+       SUM(CASE WHEN i.product_name = 'SEA_FOOD' THEN o.sales ELSE 0 END) AS SEA_FOOD,
+       SUM(CASE WHEN i.product_name = 'STEAK' THEN o.sales ELSE 0 END) AS STEAK,
+       SUM(CASE WHEN i.product_name = 'SALAD_BAR' THEN o.sales ELSE 0 END) AS SALAD_BAR,
+       SUM(CASE WHEN i.product_name = 'SALAD' THEN o.sales ELSE 0 END) AS SALAD,
+       SUM(CASE WHEN i.product_name = 'SANDWICH' THEN o.sales ELSE 0 END) AS SANDWICH,
+       SUM(CASE WHEN i.product_name = 'WINE' THEN o.sales ELSE 0 END) AS WINE,
+       SUM(CASE WHEN i.product_name = 'JUICE' THEN o.sales ELSE 0 END) AS JUICE
+     
+FROM (SELECT item_id, sales, TO_CHAR(TO_DATE(reserv_no,'YYYYMMDDSS'),'YYYYMM') as ë§¤ì¶œì›”
       FROM ORDER_INFO 
       ) o, item i
 WHERE i.item_id = o.item_id
-GROUP BY o.¸ÅÃâ¿ù, i.product_name;
+GROUP BY o.ë§¤ì¶œì›”;
 
 
 
 
----------- 8¹ø ¹®Á¦ ---------------------------------------------------
--- ¿ùº° ¿Â¶óÀÎ_Àü¿ë »óÇ° ¸ÅÃâ¾×À» ÀÏ¿äÀÏºÎÅÍ ¿ù¿äÀÏ±îÁö ±¸ºÐÇØ Ãâ·ÂÇÏ½Ã¿À 
--- ³¯Â¥, »óÇ°¸í, ÀÏ¿äÀÏ, ¿ù¿äÀÏ, È­¿äÀÏ, ¼ö¿äÀÏ, ¸ñ¿äÀÏ, ±Ý¿äÀÏ, Åä¿äÀÏÀÇ ¸ÅÃâÀ» ±¸ÇÏ½Ã¿À 
+---------- 8ë²ˆ ë¬¸ì œ ---------------------------------------------------
+-- ì›”ë³„ ì˜¨ë¼ì¸_ì „ìš© ìƒí’ˆ ë§¤ì¶œì•¡ì„ ì¼ìš”ì¼ë¶€í„° ì›”ìš”ì¼ê¹Œì§€ êµ¬ë¶„í•´ ì¶œë ¥í•˜ì‹œì˜¤ 
+-- ë‚ ì§œ, ìƒí’ˆëª…, ì¼ìš”ì¼, ì›”ìš”ì¼, í™”ìš”ì¼, ìˆ˜ìš”ì¼, ëª©ìš”ì¼, ê¸ˆìš”ì¼, í† ìš”ì¼ì˜ ë§¤ì¶œì„ êµ¬í•˜ì‹œì˜¤ 
 ----------------------------------------------------------------------------
-WITH o as (SELECT item_id, sales, TO_DATE(reserv_no,'YYMMDDSS') as ¿¹¾àÀÏ
+WITH o as (SELECT item_id, sales, TO_DATE(reserv_no,'YYMMDDSS') as ì˜ˆì•½ì¼
            FROM ORDER_INFO 
           )
-SELECT o.³¯Â¥
-     , i.product_name as »óÇ°¸í
+SELECT o.ë‚ ì§œ
+     , i.product_name as ìƒí’ˆëª…
      , sum(o.sales)
-     , o.¿äÀÏ
+     , o.ìš”ì¼
 FROM (SELECT *
       FROM item
-      WHERE product_desc = '¿Â¶óÀÎ_Àü¿ë»óÇ°'
+      WHERE product_desc = 'ì˜¨ë¼ì¸_ì „ìš©ìƒí’ˆ'
       ) i, 
-      (SELECT d.*, TO_CHAR(d.¿¹¾àÀÏ, 'YYYYMM') as ³¯Â¥, TO_CHAR(d.¿¹¾àÀÏ, 'day') as ¿äÀÏ
-        FROM(SELECT item_id, sales, TO_DATE(reserv_no,'YYMMDDSS') as ¿¹¾àÀÏ
+      (SELECT d.*, TO_CHAR(d.ì˜ˆì•½ì¼, 'YYYYMM') as ë‚ ì§œ, TO_CHAR(d.ì˜ˆì•½ì¼, 'day') as ìš”ì¼
+        FROM(SELECT item_id, sales, TO_DATE(reserv_no,'YYMMDDSS') as ì˜ˆì•½ì¼
      FROM ORDER_INFO) d
       ) o
 WHERE i.item_id = o.item_id
-GROUP BY o.³¯Â¥, i.product_name, o.¿äÀÏ;
+GROUP BY o.ë‚ ì§œ, i.product_name, o.ìš”ì¼;
 
 
----------- 9¹ø ¹®Á¦ ----------------------------------------------------
---'¸ÅÃâÀÌ·Â'ÀÌ ÀÖ´Â °í°´ÀÇ ÁÖ¼Ò, ¿ìÆí¹øÈ£, ÇØ´çÁö¿ª °í°´¼ö¸¦ Ãâ·ÂÇÏ½Ã¿À
+---------- 9ë²ˆ ë¬¸ì œ ----------------------------------------------------
+--'ë§¤ì¶œì´ë ¥'ì´ ìžˆëŠ” ê³ ê°ì˜ ì£¼ì†Œ, ìš°íŽ¸ë²ˆí˜¸, í•´ë‹¹ì§€ì—­ ê³ ê°ìˆ˜ë¥¼ ì¶œë ¥í•˜ì‹œì˜¤
 ----------------------------------------------------------------------------
