@@ -89,11 +89,5 @@ FROM (SELECT TO_CHAR(TO_DATE(period,'YYYYMM'),'YYYY') yy
       FROM kor_loan_status 
       WHERE region = '´ëÀü'
       GROUP BY ROLLUP (period)
-      ) a;
-      
-      
-
-
-
-
-
+      ) a
+WHERE yy is not null;
