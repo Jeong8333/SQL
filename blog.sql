@@ -48,3 +48,15 @@ INSERT INTO ex1 VALUES(
     , '홍길동'
     , '길동'
 );
+
+
+CREATE TABLE ex_u(
+       mem_name  VARCHAR2(50)
+     , mem_id    VARCHAR2(10) UNIQUE
+     , mem_pw    VARCHAR2(20) NOT NULL
+);
+;
+INSERT INTO ex_u VALUES('홍길동', 'a001', 'a123456789');
+INSERT INTO ex_u VALUES('홍길동', 'a001', 'a1234');  -- mem_id 중복
+INSERT INTO ex_u VALUES('유재석', 'b001', 'a5678');
+INSERT INTO ex_u(mem_name, mem_pw) VALUES('아이유', 'a0000');
