@@ -1,25 +1,25 @@
 
 /*
-  Æ®·£Àè¼Ç Transaction '°Å·¡'
-  ÀºÇà¿¡¼­ ÀÔ±Ý°ú Ãâ±ÝÀ» ÇÏ´Â ±× °Å·¡¸¦ ¸»ÇÏ´Â ´Ü¾î·Î 
-  ÇÁ·Î±×·¡¹Ö ¾ð¾î³ª ¿À¶óÅ¬¿¡¼­ ¸»ÇÏ´Â Æ®·£Àè¼Çµµ ÀÌ °³³ä¿¡¼­ Â÷¿ëÇÑ°Í 
+  íŠ¸ëžœìž­ì…˜ Transaction 'ê±°ëž˜'
+  ì€í–‰ì—ì„œ ìž…ê¸ˆê³¼ ì¶œê¸ˆì„ í•˜ëŠ” ê·¸ ê±°ëž˜ë¥¼ ë§í•˜ëŠ” ë‹¨ì–´ë¡œ 
+  í”„ë¡œê·¸ëž˜ë° ì–¸ì–´ë‚˜ ì˜¤ë¼í´ì—ì„œ ë§í•˜ëŠ” íŠ¸ëžœìž­ì…˜ë„ ì´ ê°œë…ì—ì„œ ì°¨ìš©í•œê²ƒ 
 
-  A ÀºÇà (Ãâ±Ý ÇÏ¿© ¼Û±Ý) -> B ÀºÇà 
-  ¼Û±Ý Áß¿¡ ¿À·ù°¡ ¹ß»ý 
-  A ÀºÇà °èÁÂ¿¡¼­ µ·ÀÌ ºüÁ®³ª°¡°í 
-  B ÀºÇà °èÁÂ¿¡ ÀÔ±ÝµÇÁö ¾ÊÀ½.
+  A ì€í–‰ (ì¶œê¸ˆ í•˜ì—¬ ì†¡ê¸ˆ) -> B ì€í–‰ 
+  ì†¡ê¸ˆ ì¤‘ì— ì˜¤ë¥˜ê°€ ë°œìƒ 
+  A ì€í–‰ ê³„ì¢Œì—ì„œ ëˆì´ ë¹ ì ¸ë‚˜ê°€ê³  
+  B ì€í–‰ ê³„ì¢Œì— ìž…ê¸ˆë˜ì§€ ì•ŠìŒ.
 
-  ¿À·ù¸¦ ÆÄ¾ÇÇÏ¿© A°èÁÂ Ãâ±Ý Ãë¼Ò or Ãâ±ÝµÈ ¸¸Å­ B ÀºÇàÀ¸·Î ´Ù½Ã ¼Û±Ý
-  but ¾î¶² ¿À·ùÀÎÁö ÆÄ¾ÇÇÏ¿© Ã³¸®ÇÏ±â¿¡´Â ¸¹Àº ¹®Á¦Á¡ÀÌ ÀÖ´Ù. 
+  ì˜¤ë¥˜ë¥¼ íŒŒì•…í•˜ì—¬ Aê³„ì¢Œ ì¶œê¸ˆ ì·¨ì†Œ or ì¶œê¸ˆëœ ë§Œí¼ B ì€í–‰ìœ¼ë¡œ ë‹¤ì‹œ ì†¡ê¸ˆ
+  but ì–´ë–¤ ì˜¤ë¥˜ì¸ì§€ íŒŒì•…í•˜ì—¬ ì²˜ë¦¬í•˜ê¸°ì—ëŠ” ë§Žì€ ë¬¸ì œì ì´ ìžˆë‹¤. 
 
-  ±×·¡¼­ ³ª¿Â ÇØ°áÃ¥ -> °Å·¡°¡ ¼º°øÀûÀ¸·Î ¸ðµÎ ³¡³­ ÈÄ¿¡¾ß ÀÌ¸¦ ¿ÏÀüÇÑ °Å·¡·Î ½ÂÀÎ, 
-                 °Å·¡ µµÁß ¹º°¡ ¿À·ù°¡ ¹ß»ýÇßÀ» ¶§´Â ÀÌ °Å·¡¸¦ Ã³À½ºÎÅÍ ¾ø¾ú´ø °Å·¡·Î µÇµ¹¸°´Ù. 
+  ê·¸ëž˜ì„œ ë‚˜ì˜¨ í•´ê²°ì±… -> ê±°ëž˜ê°€ ì„±ê³µì ìœ¼ë¡œ ëª¨ë‘ ëë‚œ í›„ì—ì•¼ ì´ë¥¼ ì™„ì „í•œ ê±°ëž˜ë¡œ ìŠ¹ì¸, 
+                 ê±°ëž˜ ë„ì¤‘ ë­”ê°€ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆì„ ë•ŒëŠ” ì´ ê±°ëž˜ë¥¼ ì²˜ìŒë¶€í„° ì—†ì—ˆë˜ ê±°ëž˜ë¡œ ë˜ëŒë¦°ë‹¤. 
 
-  °Å·¡ÀÇ ¾ÈÁ¤¼ºÀ» È®º¸ÇÏ´Â ¹æ¹ýÀÌ ¹Ù·Î Æ®·£Àè¼Ç
+  ê±°ëž˜ì˜ ì•ˆì •ì„±ì„ í™•ë³´í•˜ëŠ” ë°©ë²•ì´ ë°”ë¡œ íŠ¸ëžœìž­ì…˜
 */
 
 
--- COMMIT °ú ROLLBACK
+-- COMMIT ê³¼ ROLLBACK
 
 CREATE TABLE ch10_sales (
        sales_month   VARCHAR2(8),
@@ -28,7 +28,7 @@ CREATE TABLE ch10_sales (
        channel_desc  VARCHAR2(20),
        sales_amt     NUMBER );
        
--- (1) commit ¾øÀ½ ------------------------------------------------------------------------------------------------
+-- (1) commit ì—†ìŒ ------------------------------------------------------------------------------------------------
 
 CREATE OR REPLACE PROCEDURE iud_ch10_sales_proc 
             ( p_sales_month ch10_sales.sales_month%TYPE )
@@ -61,18 +61,18 @@ EXEC iud_ch10_sales_proc ( '199901');
 
 
 
--- sqlplus Á¢¼ÓÇÏ¿© Á¶È¸ 
--- °Ç¼ö°¡ 0
+-- sqlplus ì ‘ì†í•˜ì—¬ ì¡°íšŒ 
+-- ê±´ìˆ˜ê°€ 0
 SELECT COUNT(*)
 FROM ch10_sales ;
 
 TRUNCATE TABLE ch10_sales;
 
--- (2) ¿À·ù »ý°åÀ» ½Ã ----------------------------------------------------------------------------------------------
+-- (2) ì˜¤ë¥˜ ìƒê²¼ì„ ì‹œ ----------------------------------------------------------------------------------------------
 
 
 ALTER TABLE ch10_sales ADD CONSTRAINTS pk_ch10_sales PRIMARY KEY (sales_month, country_name, prod_category, channel_desc);
--- Á¦¾àÁ¶°Ç ¼³Á¤ ÈÄ Å×½ºÆ® 
+-- ì œì•½ì¡°ê±´ ì„¤ì • í›„ í…ŒìŠ¤íŠ¸ 
 
 CREATE OR REPLACE PROCEDURE iud_ch10_sales_proc 
             ( p_sales_month ch10_sales.sales_month%TYPE )
@@ -97,7 +97,7 @@ BEGIN
        D.PROD_CATEGORY,
        E.CHANNEL_DESC;
 
- -- ´Ù Ã³¸®µÇ°í ¿À·ù°¡ ¾øÀ»½Ã Ä¿¹Ô 
+ -- ë‹¤ ì²˜ë¦¬ë˜ê³  ì˜¤ë¥˜ê°€ ì—†ì„ì‹œ ì»¤ë°‹ 
  COMMIT;
 
 EXCEPTION WHEN OTHERS THEN
@@ -108,7 +108,7 @@ END;
 
 
 ---------------------------------------------------------------------------------------------------------------------
--- ¿¹¿ÜÃ³¸® Á¤º¸ ÀúÀå
+-- ì˜ˆì™¸ì²˜ë¦¬ ì •ë³´ ì €ìž¥
 CREATE TABLE error_log(
      error_seq NUMBER
     ,prog_name VARCHAR2(80)
@@ -118,7 +118,7 @@ CREATE TABLE error_log(
     ,error_date DATE DEFAULT SYSDATE
 );
 
--- ½ÃÄö½º
+-- ì‹œí€€ìŠ¤
 CREATE SEQUENCE error_seq
 INCREMENT BY 1
 START WITH 1
@@ -127,7 +127,7 @@ MAXVALUE 999999
 NOCYCLE
 NOCACHE;
 
--- ¿À·ù ÀúÀå
+-- ì˜¤ë¥˜ ì €ìž¥
 CREATE OR REPLACE PROCEDURE error_log_proc(
      p_name     error_log.prog_name%TYPE
     ,p_code     error_log.error_code%TYPE
@@ -150,48 +150,48 @@ IS
    vd_curr_date    DATE := SYSDATE;
    vn_cnt          NUMBER := 0;
    
-   ex_invalid_depid EXCEPTION; -- Àß¸øµÈ ºÎ¼­¹øÈ£ÀÏ °æ¿ì ¿¹¿Ü Á¤ÀÇ
-   PRAGMA EXCEPTION_INIT ( ex_invalid_depid, -20000); -- ¿¹¿Ü¸í°ú ¿¹¿ÜÄÚµå ¿¬°á
+   ex_invalid_depid EXCEPTION; -- ìž˜ëª»ëœ ë¶€ì„œë²ˆí˜¸ì¼ ê²½ìš° ì˜ˆì™¸ ì •ì˜
+   PRAGMA EXCEPTION_INIT ( ex_invalid_depid, -20000); -- ì˜ˆì™¸ëª…ê³¼ ì˜ˆì™¸ì½”ë“œ ì—°ê²°
 
-   ex_invalid_month EXCEPTION; -- Àß¸øµÈ ÀÔ»ç¿ùÀÎ °æ¿ì ¿¹¿Ü Á¤ÀÇ
-   PRAGMA EXCEPTION_INIT ( ex_invalid_month, -1843); -- ¿¹¿Ü¸í°ú ¿¹¿ÜÄÚµå ¿¬°á
+   ex_invalid_month EXCEPTION; -- ìž˜ëª»ëœ ìž…ì‚¬ì›”ì¸ ê²½ìš° ì˜ˆì™¸ ì •ì˜
+   PRAGMA EXCEPTION_INIT ( ex_invalid_month, -1843); -- ì˜ˆì™¸ëª…ê³¼ ì˜ˆì™¸ì½”ë“œ ì—°ê²°
    
    v_err_code error_log.error_code%TYPE;
    v_err_msg  error_log.error_message%TYPE;
    v_err_line error_log.error_line%TYPE;
 BEGIN
- -- ºÎ¼­Å×ÀÌºí¿¡¼­ ÇØ´ç ºÎ¼­¹øÈ£ Á¸ÀçÀ¯¹« Ã¼Å©
+ -- ë¶€ì„œí…Œì´ë¸”ì—ì„œ í•´ë‹¹ ë¶€ì„œë²ˆí˜¸ ì¡´ìž¬ìœ ë¬´ ì²´í¬
  SELECT COUNT(*)
    INTO vn_cnt
    FROM departments
   WHERE department_id = p_department_id;
 	  
  IF vn_cnt = 0 THEN
-    RAISE ex_invalid_depid; -- »ç¿ëÀÚ Á¤ÀÇ ¿¹¿Ü ¹ß»ý
+    RAISE ex_invalid_depid; -- ì‚¬ìš©ìž ì •ì˜ ì˜ˆì™¸ ë°œìƒ
  END IF;
 
--- ÀÔ»ç¿ù Ã¼Å© (1~12¿ù ¹üÀ§¸¦ ¹þ¾î³µ´ÂÁö Ã¼Å©)
+-- ìž…ì‚¬ì›” ì²´í¬ (1~12ì›” ë²”ìœ„ë¥¼ ë²—ì–´ë‚¬ëŠ”ì§€ ì²´í¬)
  IF SUBSTR(p_hire_month, 5, 2) NOT BETWEEN '01' AND '12' THEN
-    RAISE ex_invalid_month; -- »ç¿ëÀÚ Á¤ÀÇ ¿¹¿Ü ¹ß»ý
+    RAISE ex_invalid_month; -- ì‚¬ìš©ìž ì •ì˜ ì˜ˆì™¸ ë°œìƒ
  END IF;
 
- -- employee_idÀÇ max °ª¿¡ +1
+ -- employee_idì˜ max ê°’ì— +1
  SELECT MAX(employee_id) + 1
    INTO vn_employee_id
    FROM employees;
  
--- »ç¿ëÀÚ¿¹¿ÜÃ³¸® ¿¹Á¦ÀÌ¹Ç·Î »ç¿ø Å×ÀÌºí¿¡ ÃÖ¼ÒÇÑ µ¥ÀÌÅÍ¸¸ ÀÔ·ÂÇÔ
+-- ì‚¬ìš©ìžì˜ˆì™¸ì²˜ë¦¬ ì˜ˆì œì´ë¯€ë¡œ ì‚¬ì› í…Œì´ë¸”ì— ìµœì†Œí•œ ë°ì´í„°ë§Œ ìž…ë ¥í•¨
 INSERT INTO employees ( employee_id, emp_name, hire_date, department_id )
             VALUES ( vn_employee_id, p_emp_name, TO_DATE(p_hire_month || '01'), p_department_id );              
  COMMIT;
 
-EXCEPTION WHEN ex_invalid_depid THEN -- »ç¿ëÀÚ Á¤ÀÇ ¿¹¿Ü Ã³¸®
+EXCEPTION WHEN ex_invalid_depid THEN -- ì‚¬ìš©ìž ì •ì˜ ì˜ˆì™¸ ì²˜ë¦¬
                v_err_code := SQLCODE;
-               v_err_msg  := 'ÇØ´ç ºÎ¼­°¡ ¾ø½À´Ï´Ù';
+               v_err_msg  := 'í•´ë‹¹ ë¶€ì„œê°€ ì—†ìŠµë‹ˆë‹¤';
                v_err_line := DBMS_UTILITY.FORMAT_ERROR_BACKTRACE;
                ROLLBACK;
                error_log_proc ( 'ch10_ins_emp2_proc', v_err_code, v_err_msg, v_err_line); 
-          WHEN ex_invalid_month THEN -- ÀÔ»ç¿ù »ç¿ëÀÚ Á¤ÀÇ ¿¹¿Ü Ã³¸®
+          WHEN ex_invalid_month THEN -- ìž…ì‚¬ì›” ì‚¬ìš©ìž ì •ì˜ ì˜ˆì™¸ ì²˜ë¦¬
                v_err_code := SQLCODE;
                v_err_msg  := SQLERRM;
                v_err_line := DBMS_UTILITY.FORMAT_ERROR_BACKTRACE;
@@ -205,9 +205,9 @@ EXCEPTION WHEN ex_invalid_depid THEN -- »ç¿ëÀÚ Á¤ÀÇ ¿¹¿Ü Ã³¸®
                error_log_proc ( 'ch10_ins_emp2_proc', v_err_code, v_err_msg, v_err_line);        	
 END;
 
--- Àß¸øµÈ ºÎ¼­
+-- ìž˜ëª»ëœ ë¶€ì„œ
 EXEC ch10_ins_emp2_proc ('HONG', 1000, '201401'); 
--- Àß¸øµÈ ¿ù
+-- ìž˜ëª»ëœ ì›”
 EXEC ch10_ins_emp2_proc ('HONG', 100 , '201413');
 
 
@@ -219,10 +219,10 @@ commit;
 
 /*
     SAVEPOINT 
-    º¸Åë ROLLBACKÀ» ¸í½ÃÇÏ¸é INSERT, DELETE, UPDATE, MERGE 
-    ÀÛ¾÷ ÀüÃ¼°¡ Ãë¼ÒµÇ´Âµ¥ ÀüÃ¼°¡ ¾Æ´Ñ Æ¯Á¤ ºÎºÐ¿¡¼­ Æ®·£Àè¼ÇÀ» Ãë¼Ò½ÃÅ³ ¼ö ÀÖ´Ù. 
-    ÀÌ·¸°Ô ÇÏ·Á¸é Ãë¼ÒÇÏ·Á´Â ÁöÁ¡À» ¸í½ÃÇÑ µÚ, ±× ÁöÁ¡±îÁö ÀÛ¾÷À» Ãë¼ÒÇÏ´Â 
-    ½ÄÀ¸·Î »ç¿ëÇÏ´Âµ¥ ÀÌ ÁöÁ¡À» SAVEPOINT¶ó°í ÇÑ´Ù. 
+    ë³´í†µ ROLLBACKì„ ëª…ì‹œí•˜ë©´ INSERT, DELETE, UPDATE, MERGE 
+    ìž‘ì—… ì „ì²´ê°€ ì·¨ì†Œë˜ëŠ”ë° ì „ì²´ê°€ ì•„ë‹Œ íŠ¹ì • ë¶€ë¶„ì—ì„œ íŠ¸ëžœìž­ì…˜ì„ ì·¨ì†Œì‹œí‚¬ ìˆ˜ ìžˆë‹¤. 
+    ì´ë ‡ê²Œ í•˜ë ¤ë©´ ì·¨ì†Œí•˜ë ¤ëŠ” ì§€ì ì„ ëª…ì‹œí•œ ë’¤, ê·¸ ì§€ì ê¹Œì§€ ìž‘ì—…ì„ ì·¨ì†Œí•˜ëŠ” 
+    ì‹ìœ¼ë¡œ ì‚¬ìš©í•˜ëŠ”ë° ì´ ì§€ì ì„ SAVEPOINTë¼ê³  í•œë‹¤. 
 */
 CREATE TABLE ex_save(
      ex_no NUMBER
@@ -258,10 +258,10 @@ BEGIN
         ROLLBACK;
 END;
 
-EXEC save_porc('1');  -- ¼¼ÀÌºê Æ÷ÀÎÆ® 1±îÁö ·Ñ¹é ÈÄ Ä¿¹Ô
-EXEC save_porc('2');  -- ¼¼ÀÌºê Æ÷ÀÎÆ® 2±îÁö ·Ñ¹é ÈÄ Ä¿¹Ô
-EXEC save_porc('3');  -- ´Ù ·Ñ¹é
-EXEC save_porc('4');  -- Á¤»ó Ã³¸®µÇ¾î ´Ù ÀúÀåµÈ ÈÄ Ä¿¹Ô
+EXEC save_porc('1');  -- ì„¸ì´ë¸Œ í¬ì¸íŠ¸ 1ê¹Œì§€ ë¡¤ë°± í›„ ì»¤ë°‹
+EXEC save_porc('2');  -- ì„¸ì´ë¸Œ í¬ì¸íŠ¸ 2ê¹Œì§€ ë¡¤ë°± í›„ ì»¤ë°‹
+EXEC save_porc('3');  -- ë‹¤ ë¡¤ë°±
+EXEC save_porc('4');  -- ì •ìƒ ì²˜ë¦¬ë˜ì–´ ë‹¤ ì €ìž¥ëœ í›„ ì»¤ë°‹
 
 SELECT *
 FROM ex_save;
@@ -281,13 +281,13 @@ IS
 
 BEGIN
 	
-	--±âÁ¸ µ¥ÀÌÅÍ »èÁ¦
+	--ê¸°ì¡´ ë°ì´í„° ì‚­ì œ
 	DELETE ch10_sales
 	 WHERE sales_month  = p_sales_month
 	   AND country_name = p_country_name;
 	      
-	-- ½Å±Ô·Î ¿ù, ±¹°¡¸¦ ¸Å°³º¯¼ö·Î ¹Þ¾Æ INSERT 
-	-- DELETE¸¦ ¼öÇàÇÏ¹Ç·Î PRIMARY KEY Áßº¹ÀÌ ¹ß»ýÄ¡ ¾ÊÀ½
+	-- ì‹ ê·œë¡œ ì›”, êµ­ê°€ë¥¼ ë§¤ê°œë³€ìˆ˜ë¡œ ë°›ì•„ INSERT 
+	-- DELETEë¥¼ ìˆ˜í–‰í•˜ë¯€ë¡œ PRIMARY KEY ì¤‘ë³µì´ ë°œìƒì¹˜ ì•ŠìŒ
 	INSERT INTO ch10_sales (sales_month, country_name, prod_category, channel_desc, sales_amt)	   
 	SELECT A.SALES_MONTH, 
        C.COUNTRY_NAME, 
@@ -306,21 +306,21 @@ BEGIN
        D.PROD_CATEGORY,
        E.CHANNEL_DESC;
        
- -- SAVEPOINT È®ÀÎÀ» À§ÇÑ UPDATE
+ -- SAVEPOINT í™•ì¸ì„ ìœ„í•œ UPDATE
 
-  -- ÇöÀç½Ã°£¿¡¼­ ÃÊ¸¦ °¡Á®¿Í ¼ýÀÚ·Î º¯È¯ÇÑ ÈÄ * 10 (¸Å¹ø ÃÊ´Â ´Þ¶óÁö¹Ç·Î ¼º°øÀûÀ¸·Î ½ÇÇà ½Ã ÀÌ °ªÀº ¸Å¹ø ´Þ¶óÁü)
+  -- í˜„ìž¬ì‹œê°„ì—ì„œ ì´ˆë¥¼ ê°€ì ¸ì™€ ìˆ«ìžë¡œ ë³€í™˜í•œ í›„ * 10 (ë§¤ë²ˆ ì´ˆëŠ” ë‹¬ë¼ì§€ë¯€ë¡œ ì„±ê³µì ìœ¼ë¡œ ì‹¤í–‰ ì‹œ ì´ ê°’ì€ ë§¤ë²ˆ ë‹¬ë¼ì§)
  UPDATE ch10_sales
     SET sales_amt = 10 * to_number(to_char(sysdate, 'ss'))
   WHERE sales_month  = p_sales_month
 	   AND country_name = p_country_name;
 	   
- -- SAVEPOINT ÁöÁ¤      
+ -- SAVEPOINT ì§€ì •      
 
  SAVEPOINT mysavepoint;      
  
  
- -- ch10_country_month_sales Å×ÀÌºí¿¡ INSERT
- -- Áßº¹ ÀÔ·Â ½Ã PRIMARY KEY Áßº¹µÊ
+ -- ch10_country_month_sales í…Œì´ë¸”ì— INSERT
+ -- ì¤‘ë³µ ìž…ë ¥ ì‹œ PRIMARY KEY ì¤‘ë³µë¨
  INSERT INTO ch10_country_month_sales 
        SELECT sales_month, country_name, SUM(sales_amt)
          FROM ch10_sales
@@ -332,8 +332,8 @@ BEGIN
 
 EXCEPTION WHEN OTHERS THEN
                DBMS_OUTPUT.PUT_LINE(SQLERRM);
-               ROLLBACK TO mysavepoint; -- SAVEPOINT ±îÁö¸¸ ROLLBACK
-               COMMIT; -- SAVEPOINT ÀÌÀü±îÁö´Â COMMIT
+               ROLLBACK TO mysavepoint; -- SAVEPOINT ê¹Œì§€ë§Œ ROLLBACK
+               COMMIT; -- SAVEPOINT ì´ì „ê¹Œì§€ëŠ” COMMIT
 
 	
 END;   
