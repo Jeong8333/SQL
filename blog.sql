@@ -60,3 +60,23 @@ INSERT INTO ex_u VALUES('홍길동', 'a001', 'a123456789');
 INSERT INTO ex_u VALUES('홍길동', 'a001', 'a1234');  -- mem_id 중복
 INSERT INTO ex_u VALUES('유재석', 'b001', 'a5678');
 INSERT INTO ex_u(mem_name, mem_pw) VALUES('아이유', 'a0000');
+
+CREATE TABLE ex_p(
+       mem_name  VARCHAR2(50) NOT NULL
+     , mem_id    VARCHAR2(10) PRIMARY KEY
+     , mem_pw    VARCHAR2(20) 
+);
+
+INSERT INTO ex_p VALUES('홍길동', 'a001', 'a123456789');
+INSERT INTO ex_p VALUES('홍길동', 'a001', 'a1234');  -- mem_id 중복
+INSERT INTO ex_p VALUES('유재석', 'b001', 'a5678');
+
+CREATE TABLE ex_f(
+       mem_num   NUMBER(10) NOT NULL
+     , m_id VARCHAR2(10) CONSTRAINT ex_f_fk REFERENCES ex_p(mem_id)
+);
+INSERT INTO ex_f VALUES('100', 'a001');
+
+SELECT *
+FROM ex_p, ex_f
+WHERE ex_p.mem_id = ex_f.m_id;
