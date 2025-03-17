@@ -26,3 +26,18 @@ VALUES (?, ?, ?, 'Y');
 
 SELECT *
 FROM tb_user;
+
+
+-- stock_bbs 테이블 권한 부여 java
+GRANT SELECT ON member.stock_bbs TO java;
+
+SELECT discussion_id
+     , item_code
+     , title
+     , writer_id
+     , read_count
+FROM member.stock_bbs;
+
+UPDATE tb_user
+SET user_nm = '길동'
+WHERE user_id = '0101';
