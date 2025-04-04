@@ -16,20 +16,6 @@ CREATE TABLE code_list(
 );
 drop table code_list;
 
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('TH00','연극', null);         -- 연극
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('MU00','뮤지컬', null);       -- 뮤지컬
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN00','음악', null);         -- 음악
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN01','콘서트', 'CN00');
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN02','음악', 'CN00');
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN03','클래식', 'CN00');
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN04','오페라', 'CN00');
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN05','국악', 'CN00');
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('DN00','무용/발레', null);    -- 무용/발레
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('DN01','무용', 'DN00');
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('DN02','발레', 'DN00');
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('EX00','전시', null);         -- 전시회
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('ETC','기타', null);          -- 기타
-
 
 
 -- 문화포털 api
@@ -56,20 +42,20 @@ CREATE TABLE ip_ticket(
 );
 
 
+drop table members;
 
 -- 회원 정보
 CREATE TABLE members (
-     mem_id         VARCHAR2(30)    PRIMARY KEY         -- 회원 ID
-    ,mem_pw         VARCHAR2(30)  NOT NULL            -- 회원 비밀번호
-    ,mem_nm         VARCHAR2(30)   NOT NULL            -- 회원 이름
-    ,mem_nick       VARCHAR2(100)   NOT NULL            -- 회원 닉네임
-    ,mem_email      VARCHAR2(1000)                      -- 회원 메일 주소
+     mem_id         VARCHAR2(1000)    PRIMARY KEY         -- 회원 ID
+    ,mem_pw         VARCHAR2(1000)    NOT NULL            -- 회원 비밀번호
+    ,mem_nm         VARCHAR2(1000)    NOT NULL            -- 회원 이름
+    ,mem_nick       VARCHAR2(1000)   NOT NULL            -- 회원 닉네임
+    ,mem_addr       VARCHAR2(1000)  NOT NULL            -- 회원 메일 주소
     ,profile_img    VARCHAR2(1000)                      -- 프로필 이미지 URL 또는 경로
-    ,use_yn         VARCHAR2(1)     DEFAULT 'Y'         -- 사용 여부(Y 또는 N)
     ,create_date    DATE            DEFAULT SYSDATE     -- 정보 생성일
     ,update_date    DATE            DEFAULT SYSDATE     -- 정보 수정일
+    ,use_yn         VARCHAR2(1)     DEFAULT 'Y'         -- 사용 여부(Y 또는 N)
 );
-
 
 
 -- 기록
@@ -92,20 +78,68 @@ CREATE TABLE post(
      ,CONSTRAINT fk_post_loca FOREIGN KEY (loca) REFERENCES            (loca)
 );
 
+-- ===INSERT==========================================
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('TH00','연극', null);         -- 연극
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('MU00','뮤지컬', null);       -- 뮤지컬
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN00','음악', null);         -- 음악
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN01','콘서트', 'CN00');
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN02','음악', 'CN00');
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN03','클래식', 'CN00');
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN04','오페라', 'CN00');
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN05','국악', 'CN00');
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('DN00','무용/발레', null);    -- 무용/발레
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('DN01','무용', 'DN00');
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('DN02','발레', 'DN00');
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('EX00','전시', null);         -- 전시회
+INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('ETC','기타', null);          -- 기타
 
+INSERT INTO members (
+           mem_id
+         , mem_pw
+         , mem_nm
+         , mem_nick
+         , mem_addr)
+VALUES ('test1', 1234, '테스트', '테스트계정', 'aa');
 
 -- ===조회==============================================================
 
+-- code 대분류
+SELECT * 
+FROM code_list
+WHERE comm_parent IS NULL;
+-- code 소분류
+SELECT * 
+FROM code_list
+WHERE comm_parent = 'DN00';
+
+-- 문화포털 api
 SELECT *
 FROM culture;
 
+-- 인터파크 티켓 크롤링
 SELECT *
 FROM ip_ticket;
+SELECT COUNT(title)
+FROM ip_ticket;
+
+-- 회원 조회
+SELECT mem_id
+     , mem_pw
+     , mem_nm
+     , mem_nick
+     , mem_email
+     , profile_img
+     , create_date
+     , update_date
+     , use_yn
+FROM members
+WHERE use_yn = 'Y';
+
 
 
 SELECT b.comm_cd
      , b.comm_nm
-    , COUNT(b.comm_cd)
+     , COUNT(b.comm_cd)
 FROM culture a, code_list b
 WHERE a.comm_cd = b.comm_cd
 GROUP BY b.comm_cd, b.comm_nm;
@@ -113,21 +147,27 @@ GROUP BY b.comm_cd, b.comm_nm;
 
 SELECT b.comm_cd
      , b.comm_nm
-    , COUNT(b.comm_cd)
+     , COUNT(b.comm_cd) as count
 FROM ip_ticket a, code_list b
 WHERE a.comm_cd = b.comm_cd
 GROUP BY b.comm_cd, b.comm_nm;
 
-WITH A as(  SELECT comm_cd, title, poster, period_date,loc, culture_description
+
+
+WITH a as(  SELECT comm_cd, title, poster, period_date,loc, culture_description
                   ,TO_DATE(SUBSTR(period_date,1,8)) as start_date    -- 공연 시작일
                   ,TO_DATE(SUBSTR(period_date,12,8)) as end_date     -- 공연 종료일
             FROM culture
             WHERE poster IS NOT NULL
 )
+SELECT b.comm_nm, a.title, a.poster, a.start_date, a.end_date, a.culture_description
+FROM a, code_list b
+WHERE a.comm_cd = b.comm_cd
+AND a.comm_cd = 'TH00'
+ORDER BY a.end_date;
 
 
-
-SELECT a. comm_cd, b.comm_nm, a.title, a.poster, a.period_date, a.loc
+SELECT b.comm_nm, a.title, a.poster, a.period_date, a.loc
 FROM ip_ticket a, code_list b
 WHERE a.comm_cd = b.comm_cd
 ORDER BY a.comm_cd, a.title;
