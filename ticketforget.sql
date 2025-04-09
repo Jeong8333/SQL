@@ -29,8 +29,8 @@ CREATE TABLE culture(
     ,CONSTRAINT fk_culture_comm_cd FOREIGN KEY (comm_cd) REFERENCES code_list(comm_cd)
 );
 
-ALTER TABLE tb_culture
-RENAME COLUMN loc TO addr;
+ALTER TABLE reviews
+RENAME COLUMN comm_nm TO comm_name;
 
 
 -- 인터파크 티켓 크롤링
@@ -58,7 +58,30 @@ CREATE TABLE members (
     ,use_yn         VARCHAR2(1)       DEFAULT 'Y'         -- 사용 여부(Y 또는 N)
 ); 
 
-
+-- 기록
+CREATE TABLE reviews(
+      review_no     NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NOCACHE)
+     ,mem_id        VARCHAR2(1000)          -- 회원 id
+     ,ticket_no     NUMBER                  -- 인터파크 티켓 테이블 id
+     ,culture_no    NUMBER                  -- 문화 테이블 id
+     ,comm_cd       VARCHAR2(4)             -- 분류코드
+     ,comm_nm       VARCHAR2(16)            -- 분류 항목
+     ,title         VARCHAR2(1000)          -- 공연명
+     ,poster        VARCHAR2(1000)          -- 이미지(썸네일 주소)
+     ,loc           VARCHAR2(1000)          -- 장소
+     ,viewing_date  DATE                    -- 관람일
+     ,review_date   DATE DEFAULT SYSDATE    -- 작성일
+     ,update_date   DATE DEFAULT SYSDATE    -- 수정일
+     ,friend        VARCHAR2(100)           -- 동행인
+     ,rating        NUMBER                  -- 별점
+     ,review        CLOB                    -- 관람평
+     ,photo         CLOB                    -- 첨부 사진 경로
+     ,del_yn         VARCHAR2(1)  DEFAULT 'N'   -- 삭제 여부(Y 또는 N)
+     ,PRIMARY KEY (review_no)
+     ,CONSTRAINT fk_review_mem_id       FOREIGN KEY (mem_id)        REFERENCES members(mem_id)   
+     ,CONSTRAINT fk_review_ticket_no    FOREIGN KEY (ticket_no)     REFERENCES tb_ticket(ticket_no)   
+     ,CONSTRAINT fk_review_culture_no   FOREIGN KEY (culture_no)    REFERENCES tb_culture(culture_no)   
+);
 
 
 
@@ -108,69 +131,66 @@ WHERE title IN (
                 JOIN ip_ticket i ON c.title = i.title
 );
 
--- 기록
-CREATE TABLE reviews(
-      review_no     NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NOCACHE)
-     ,mem_id        VARCHAR2(1000)          -- 회원 id
-     ,ticket_no     NUMBER                  -- 인터파크 티켓 테이블 id
-     ,culture_no    NUMBER                  -- 문화 테이블 id
-     ,comm_cd       VARCHAR2(4)             -- 분류코드
-     ,comm_nm       VARCHAR2(16)            -- 분류 항목
-     ,title         VARCHAR2(1000)          -- 공연명
-     ,poster        VARCHAR2(1000)          -- 이미지(썸네일 주소)
-     ,loc           VARCHAR2(1000)          -- 장소
-     ,viewing_date  DATE                    -- 관람일
-     ,review_date   DATE DEFAULT SYSDATE    -- 작성일
-     ,update_date   DATE DEFAULT SYSDATE    -- 수정일
-     ,friend        VARCHAR2(100)           -- 동행인
-     ,rating        NUMBER                  -- 별점
-     ,review        CLOB                    -- 관람평
-     ,photo         CLOB                    -- 첨부 사진 경로
-     ,del_yn         VARCHAR2(1)  DEFAULT 'N'   -- 삭제 여부(Y 또는 N)
-     ,PRIMARY KEY (review_no)
-     ,CONSTRAINT fk_review_mem_id       FOREIGN KEY (mem_id)        REFERENCES members(mem_id)   
-     ,CONSTRAINT fk_review_ticket_no    FOREIGN KEY (ticket_no)     REFERENCES tb_ticket(ticket_no)   
-     ,CONSTRAINT fk_review_culture_no   FOREIGN KEY (culture_no)    REFERENCES tb_culture(culture_no)   
-);
+
 
 -- =================================================
-SELECT *
-FROM(
-        SELECT c.comm_cd,
-               c.comm_nm,
-               a.title,
-               a.poster,
-               a.period_date,
-               a.addr,
-               a.culture_description
-        FROM (SELECT ticket_no, comm_cd, title, poster, period_date, addr,  NULL AS culture_description 
-              FROM tb_ticket
-              UNION ALL
-              SELECT culture_no, comm_cd, title, poster, period_date, addr, culture_description
-              FROM tb_culture
-              ) a
-        JOIN code_list c ON c.comm_cd = a.comm_cd
-        WHERE c.comm_nm ='뮤지컬')
-        
-WHERE title LIKE '%명성%';
+SELECT c.comm_cd,
+       c.comm_nm,
+       a.ticket_no,
+       a.title,
+       a.poster,
+       a.period_date,
+       a.addr,
+       a.culture_description
+FROM (SELECT ticket_no, comm_cd, title, poster, period_date, addr,  NULL AS culture_description 
+      FROM tb_ticket
+      UNION ALL
+      SELECT culture_no, comm_cd, title, poster, period_date, addr, culture_description
+      FROM tb_culture
+  ) a
+JOIN code_list c ON c.comm_cd = a.comm_cd
+WHERE c.comm_cd = 'TH00';
 
-SELECT ticket_no, title
-FROM tb_ticket
-WHERE title LIKE '%명성%';
 
-INSERT INTO reviews( mem_id , ticket_no, comm_cd, comm_nm, title, poster, loc
+INSERT INTO reviews( mem_id , ticket_no, culture_no,comm_code, comm_name, title, poster, addr
                     , viewing_date, friend, rating, review, photo)
-VALUES('testtest', 1660, 'MU00', '뮤지컬', '뮤지컬 〈명성황후〉 30주년 기념 공연 - 대전', 'https://ticketimage.interpark.com/Play/image/large/25/25004164_p.gif', '대전예술의전당 아트홀'
+VALUES('testtest', 1660, null,'MU00','뮤지컬', '뮤지컬 〈명성황후〉 30주년 기념 공연 - 대전', 'https://ticketimage.interpark.com/Play/image/large/25/25004164_p.gif', '대전예술의전당 아트홀'
       , '25/04/06', '홍길동', '4.2', '리뷰 내용', '이미지 주소');
+INSERT INTO reviews( mem_id , ticket_no, culture_no,comm_code, comm_name, title, poster, addr
+                    , viewing_date, friend, rating, review, photo)
+VALUES('testtest', 18, null,'CN03','클래식', '대학로 혜화 연극 비누향기', 'https://ticketimage.interpark.com/Play/image/large/21/21007446_p.gif', '대학로'
+      , '25/04/01', '신미정', '5', '리뷰 내용', '이미지 주소');
 
+UPDATE members
+SET profile_img = 'test'
+  , update_date = SYSDATE
+WHERE mem_id = 'testtest';
 
-
-
-
-
-
-
-
+SELECT *
+			FROM(SELECT rownum as rnum
+			          , a.*
+			     FROM (SELECT r.review_no
+			                 ,r.title
+			                 ,r.comm_cd
+			                 ,c.comm_nm as comm_nm
+			                 ,r.ticket_no
+			                 ,r.culture_no
+			                 ,r.poster
+			                 ,r.addr
+			                 ,r.viewing_date
+			                 ,r.review_date
+			                 ,r.update_date
+			                 ,r.friend
+			                 ,r.rating
+			                 ,r.review
+			                 ,r.photo
+			                 ,r.del_yn
+			           FROM reviews r, code_list c
+			           WHERE r.comm_cd = c.comm_cd
+			           ORDER BY review_no DESC
+			          ) a
+			    ) b
+			WHERE rnum BETWEEN 1 AND 5		;
 
 
 -- ===조회==============================================================
