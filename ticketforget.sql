@@ -58,7 +58,31 @@ CREATE TABLE members (
     ,use_yn         VARCHAR2(1)       DEFAULT 'Y'         -- 사용 여부(Y 또는 N)
 ); 
 
--- 기록
+-- ip_ticket, culture 테이블에 각각의 고유 id(PRIMARY KEY) 부여를 위한 새로운 테이블 생성
+CREATE TABLE TB_TICKET AS 
+SELECT rownum as ticket_no, COMM_CD,TITLE,POSTER,PERIOD_DATE,LOC
+FROM (
+        SELECT COMM_CD,TITLE,POSTER,PERIOD_DATE,LOC, substr(period_date,1,4) as yy
+        FROM ip_ticket
+        ORDER BY to_number(yy) ASC
+     );
+
+
+CREATE TABLE TB_CULTURE AS 
+SELECT rownum as culture_no, COMM_CD,TITLE,POSTER,PERIOD_DATE,LOC,CULTURE_DESCRIPTION
+FROM (
+        SELECT COMM_CD,TITLE,POSTER,PERIOD_DATE,LOC,CULTURE_DESCRIPTION, substr(period_date,1,4) as yy
+        FROM culture
+        ORDER BY to_number(yy) ASC
+      );
+
+ALTER TABLE TB_TICKET ADD CONSTRAINT pk_ip_ticket_id PRIMARY KEY (ticket_no);
+ALTER TABLE TB_CULTURE ADD CONSTRAINT pk_culture_id PRIMARY KEY (culture_no);
+
+
+
+
+-- 후기 작성 정보 저장 table
 CREATE TABLE reviews(
       review_no     NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NOCACHE)
      ,mem_id        VARCHAR2(1000)          -- 회원 id
@@ -265,10 +289,33 @@ WHERE a.comm_cd = b.comm_cd
 ORDER BY a.comm_cd, a.title;
 
 
--- culture테이블과 ip_ticket 테이블을 comm_cd로 조인
 
 
 
+SELECT a.ticket_no
+     , a.title
+     , a.comm_code
+     , b.comm_nm as comm_name
+     , a.poster
+     , a.addr
+     , TO_CHAR(a.viewing_date,'YYYYMMDD') as viewing_date
+     , a.review_date
+     , a.update_date
+     , a.friend
+     , a.rating
+     , a.review
+     , a.photo
+     , a.del_yn
+FROM  reviews a, code_list b
+WHERE a.comm_code = b.comm_cd
+AND   a.review_no = 30
+AND   a.del_yn ='N';
 
 
-
+UPDATE reviews
+SET friend = '누구'
+   ,review = '후기'
+   ,rating = 3.5
+   ,update_date= SYSDATE
+WHERE review_no = 30
+AND mem_id = 'testtest';
