@@ -10,27 +10,23 @@ GRANT UNLIMITED TABLESPACE TO ticket;
 // 분류항목(연극, 뮤지컬, 오페라, 음악/콘서트, 국악, 무용/발레, 전시, 기타)
 
 CREATE TABLE code_list(
-     comm_cd      VARCHAR2(4)   PRIMARY KEY  
-    ,comm_nm      VARCHAR2(16) 
-    ,comm_parent  VARCHAR2(4)  
+     comm_cd      VARCHAR2(4)   PRIMARY KEY  --분류코드
+    ,comm_nm      VARCHAR2(16)               --분야명
+    ,comm_parent  VARCHAR2(4)                
 );
-
-
 
 
 -- 문화포털 api
 CREATE TABLE culture(
-     comm_cd              VARCHAR2(4)                  
-    ,title                VARCHAR2(1000)             
-    ,poster               VARCHAR2(1000)         
-    ,period_date          VARCHAR2(50)           
-    ,loc                  VARCHAR2(1000)    
+     comm_cd              VARCHAR2(4)       --분류항목            
+    ,title                VARCHAR2(1000)    --제목         
+    ,poster               VARCHAR2(1000)    --이미지(썸네일 주소)     
+    ,period_date          VARCHAR2(50)      --기간      
+    ,addr                 VARCHAR2(1000)    --장소 
     ,culture_description  CLOB
     ,CONSTRAINT fk_culture_comm_cd FOREIGN KEY (comm_cd) REFERENCES code_list(comm_cd)
 );
 
-ALTER TABLE reviews
-RENAME COLUMN comm_nm TO comm_name;
 
 
 -- 인터파크 티켓 크롤링
@@ -39,7 +35,7 @@ CREATE TABLE ip_ticket(
     ,title       VARCHAR2(1000)       --제목
     ,poster      VARCHAR2(1000)       --이미지(썸네일 주소)
     ,period_date VARCHAR2(50)         --기간
-    ,loc         VARCHAR2(1000)       --장소
+    ,addr         VARCHAR2(1000)      --장소
     ,CONSTRAINT fk_ip_ticket_comm_cd FOREIGN KEY (comm_cd) REFERENCES code_list(comm_cd)
 );
 
@@ -81,18 +77,17 @@ ALTER TABLE TB_CULTURE ADD CONSTRAINT pk_culture_id PRIMARY KEY (culture_no);
 
 
 
-
 -- 후기 작성 정보 저장 table
 CREATE TABLE reviews(
       review_no     NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NOCACHE)
      ,mem_id        VARCHAR2(1000)          -- 회원 id
      ,ticket_no     NUMBER                  -- 인터파크 티켓 테이블 id
      ,culture_no    NUMBER                  -- 문화 테이블 id
-     ,comm_cd       VARCHAR2(4)             -- 분류코드
-     ,comm_nm       VARCHAR2(16)            -- 분류 항목
+     ,comm_code     VARCHAR2(4)             -- 분류코드
+     ,comm_name     VARCHAR2(16)            -- 분류 항목
      ,title         VARCHAR2(1000)          -- 공연명
      ,poster        VARCHAR2(1000)          -- 이미지(썸네일 주소)
-     ,loc           VARCHAR2(1000)          -- 장소
+     ,addr           VARCHAR2(1000)         -- 장소
      ,viewing_date  DATE                    -- 관람일
      ,review_date   DATE DEFAULT SYSDATE    -- 작성일
      ,update_date   DATE DEFAULT SYSDATE    -- 수정일
@@ -112,7 +107,6 @@ CREATE TABLE reviews(
 -- ===INSERT==========================================
 INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('TH00','연극', null);         -- 연극
 INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('MU00','뮤지컬', null);       -- 뮤지컬
-INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN00','음악', null);         -- 음악
 INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN01','콘서트', 'CN00');
 INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN02','음악', 'CN00');
 INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('CN03','클래식', 'CN00');
@@ -195,7 +189,7 @@ SELECT *
 			          , a.*
 			     FROM (SELECT r.review_no
 			                 ,r.title
-			                 ,r.comm_cd
+			                 ,r.comm_code
 			                 ,c.comm_nm as comm_nm
 			                 ,r.ticket_no
 			                 ,r.culture_no
@@ -210,7 +204,7 @@ SELECT *
 			                 ,r.photo
 			                 ,r.del_yn
 			           FROM reviews r, code_list c
-			           WHERE r.comm_cd = c.comm_cd
+			           WHERE r.comm_code = c.comm_cd
 			           ORDER BY review_no DESC
 			          ) a
 			    ) b
@@ -319,3 +313,10 @@ SET friend = '누구'
    ,update_date= SYSDATE
 WHERE review_no = 30
 AND mem_id = 'testtest';
+
+
+
+--dump파일 생성
+CREATE OR REPLACE DIRECTORY sql_dir AS 'C:\dev\';
+GRANT READ, WRITE ON DIRECTORY sql_dir TO ticket;
+
