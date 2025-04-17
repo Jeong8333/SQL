@@ -320,3 +320,45 @@ AND mem_id = 'testtest';
 CREATE OR REPLACE DIRECTORY sql_dir AS 'C:\dev\';
 GRANT READ, WRITE ON DIRECTORY sql_dir TO ticket;
 
+
+
+
+SELECT *
+		FROM(
+		        SELECT c.comm_cd,
+		               c.comm_nm,
+		               a.ticket_no,
+		               a.title,
+		               a.poster,
+		               a.period_date,
+		               a.addr,
+		               a.culture_description
+		        FROM (SELECT ticket_no, comm_cd, title, poster, period_date, addr, NULL AS culture_description 
+		              FROM tb_ticket
+		              UNION ALL
+		              SELECT culture_no, comm_cd, title, poster, period_date, addr, culture_description
+		              FROM tb_culture
+		              ) a
+		        JOIN code_list c ON c.comm_cd = a.comm_cd
+		        WHERE c.comm_cd = 'TH00');
+
+-- 분야별 리뷰 수 
+SELECT comm_name
+     , COUNT(comm_name)
+FROM reviews
+WHERE del_yn = 'N'
+AND mem_id = 'testtest'
+GROUP BY comm_name
+ORDER BY comm_name;
+
+-- 월만 추출
+SELECT EXTRACT(MONTH FROM viewing_date) AS month
+FROM reviews;
+
+-- 월별 관람 공연 수
+SELECT EXTRACT(MONTH FROM viewing_date) as month
+     , COUNT(review_no) as count
+FROM reviews
+WHERE del_yn = 'N'
+AND mem_id = 'testtest'
+GROUP BY EXTRACT(MONTH FROM viewing_date);
