@@ -103,6 +103,17 @@ CREATE TABLE reviews(
 );
 
 
+-- 티켓 이미지 저장
+CREATE TABLE ticket_books(
+     mem_id         VARCHAR2(1000)
+    ,title          VARCHAR2(1000)
+    ,viewing_date   DATE
+    ,ticket_img     VARCHAR2(1000) 
+    ,use_yn         VARCHAR2(1)  DEFAULT 'Y'
+    ,PRIMARY KEY (mem_id)
+    ,CONSTRAINT fk_img_mem_id  FOREIGN KEY (mem_id)   REFERENCES members(mem_id)
+);
+
 
 -- ===INSERT==========================================
 INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('TH00','연극', null);         -- 연극
@@ -184,31 +195,8 @@ SET profile_img = 'test'
   , update_date = SYSDATE
 WHERE mem_id = 'testtest';
 
-SELECT *
-			FROM(SELECT rownum as rnum
-			          , a.*
-			     FROM (SELECT r.review_no
-			                 ,r.title
-			                 ,r.comm_code
-			                 ,c.comm_nm as comm_nm
-			                 ,r.ticket_no
-			                 ,r.culture_no
-			                 ,r.poster
-			                 ,r.addr
-			                 ,r.viewing_date
-			                 ,r.review_date
-			                 ,r.update_date
-			                 ,r.friend
-			                 ,r.rating
-			                 ,r.review
-			                 ,r.photo
-			                 ,r.del_yn
-			           FROM reviews r, code_list c
-			           WHERE r.comm_code = c.comm_cd
-			           ORDER BY review_no DESC
-			          ) a
-			    ) b
-			WHERE rnum BETWEEN 1 AND 5		;
+INSERT INTO ticket_books(mem_id, title, viewing_date, ticket_img)
+VALUES('testtest','테스트','25/04/28','test');
 
 
 -- ===조회==============================================================
@@ -283,9 +271,6 @@ WHERE a.comm_cd = b.comm_cd
 ORDER BY a.comm_cd, a.title;
 
 
-
-
-
 SELECT a.ticket_no
      , a.title
      , a.comm_code
@@ -305,6 +290,52 @@ WHERE a.comm_code = b.comm_cd
 AND   a.review_no = 30
 AND   a.del_yn ='N';
 
+SELECT *
+FROM(SELECT rownum as rnum
+      , a.*
+ FROM (SELECT r.review_no
+             ,r.title
+             ,r.comm_code
+             ,c.comm_nm as comm_nm
+             ,r.ticket_no
+             ,r.culture_no
+             ,r.poster
+             ,r.addr
+             ,r.viewing_date
+             ,r.review_date
+             ,r.update_date
+             ,r.friend
+             ,r.rating
+             ,r.review
+             ,r.photo
+             ,r.del_yn
+       FROM reviews r, code_list c
+       WHERE r.comm_code = c.comm_cd
+       ORDER BY review_no DESC
+      ) a
+) b
+WHERE rnum BETWEEN 1 AND 5;
+
+SELECT *
+FROM(
+        SELECT c.comm_cd,
+               c.comm_nm,
+               a.ticket_no,
+               a.title,
+               a.poster,
+               a.period_date,
+               a.addr,
+               a.culture_description
+        FROM (SELECT ticket_no, comm_cd, title, poster, period_date, addr, NULL AS culture_description 
+              FROM tb_ticket
+              UNION ALL
+              SELECT culture_no, comm_cd, title, poster, period_date, addr, culture_description
+              FROM tb_culture
+              ) a
+JOIN code_list c ON c.comm_cd = a.comm_cd
+WHERE c.comm_cd = 'TH00');
+
+
 
 UPDATE reviews
 SET friend = '누구'
@@ -315,45 +346,15 @@ WHERE review_no = 30
 AND mem_id = 'testtest';
 
 
-
---dump파일 생성
-CREATE OR REPLACE DIRECTORY sql_dir AS 'C:\dev\';
-GRANT READ, WRITE ON DIRECTORY sql_dir TO ticket;
-
-
-
-
-SELECT *
-		FROM(
-		        SELECT c.comm_cd,
-		               c.comm_nm,
-		               a.ticket_no,
-		               a.title,
-		               a.poster,
-		               a.period_date,
-		               a.addr,
-		               a.culture_description
-		        FROM (SELECT ticket_no, comm_cd, title, poster, period_date, addr, NULL AS culture_description 
-		              FROM tb_ticket
-		              UNION ALL
-		              SELECT culture_no, comm_cd, title, poster, period_date, addr, culture_description
-		              FROM tb_culture
-		              ) a
-		        JOIN code_list c ON c.comm_cd = a.comm_cd
-		        WHERE c.comm_cd = 'TH00');
-
 -- 분야별 리뷰 수 
 SELECT comm_name
-     , COUNT(comm_name)
+     , COUNT(comm_name) as count
 FROM reviews
 WHERE del_yn = 'N'
 AND mem_id = 'testtest'
 GROUP BY comm_name
-ORDER BY comm_name;
+ORDER BY count desc;
 
--- 월만 추출
-SELECT EXTRACT(MONTH FROM viewing_date) AS month
-FROM reviews;
 
 -- 월별 관람 공연 수
 SELECT EXTRACT(MONTH FROM viewing_date) as month
@@ -361,4 +362,23 @@ SELECT EXTRACT(MONTH FROM viewing_date) as month
 FROM reviews
 WHERE del_yn = 'N'
 AND mem_id = 'testtest'
-GROUP BY EXTRACT(MONTH FROM viewing_date);
+GROUP BY EXTRACT(MONTH FROM viewing_date)
+ORDER BY month;
+
+
+-- 티켓북 정보 조회
+SELECT b.mem_id
+     , ROW_NUMBER() OVER(PARTITION BY b.mem_id ORDER BY a.viewing_date DESC) as runm 
+     , a.title
+     , a.viewing_date
+     , a.ticket_img
+     , a.use_yn
+FROM ticket_books a, members b
+WHERE a.mem_id = b.mem_id
+AND a.use_yn = 'Y';
+
+
+-- ======================
+--dump파일 생성
+CREATE OR REPLACE DIRECTORY sql_dir AS 'C:\dev\';
+GRANT READ, WRITE ON DIRECTORY sql_dir TO ticket;
