@@ -105,16 +105,17 @@ CREATE TABLE reviews(
 
 -- 티켓 이미지 저장
 CREATE TABLE ticket_books(
-     mem_id         VARCHAR2(1000)
+     scrap_no       NUMBER GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NOCACHE)
+    ,mem_id         VARCHAR2(1000)
     ,title          VARCHAR2(1000)
     ,viewing_date   DATE
     ,ticket_img     VARCHAR2(1000) 
     ,use_yn         VARCHAR2(1)  DEFAULT 'Y'
-    ,PRIMARY KEY (mem_id)
+    ,PRIMARY KEY (scrap_no)
     ,CONSTRAINT fk_img_mem_id  FOREIGN KEY (mem_id)   REFERENCES members(mem_id)
 );
 
-
+drop table ticket_books;
 -- ===INSERT==========================================
 INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('TH00','연극', null);         -- 연극
 INSERT INTO code_list (comm_cd,comm_nm,comm_parent) VALUES ('MU00','뮤지컬', null);       -- 뮤지컬
@@ -197,6 +198,9 @@ WHERE mem_id = 'testtest';
 
 INSERT INTO ticket_books(mem_id, title, viewing_date, ticket_img)
 VALUES('testtest','테스트','25/04/28','test');
+INSERT INTO ticket_books(mem_id, title, viewing_date, ticket_img)
+VALUES('testtest','테스트','25/04/29','test');
+
 
 
 -- ===조회==============================================================
@@ -291,29 +295,29 @@ AND   a.review_no = 30
 AND   a.del_yn ='N';
 
 SELECT *
-FROM(SELECT rownum as rnum
-      , a.*
- FROM (SELECT r.review_no
-             ,r.title
-             ,r.comm_code
-             ,c.comm_nm as comm_nm
-             ,r.ticket_no
-             ,r.culture_no
-             ,r.poster
-             ,r.addr
-             ,r.viewing_date
-             ,r.review_date
-             ,r.update_date
-             ,r.friend
-             ,r.rating
-             ,r.review
-             ,r.photo
-             ,r.del_yn
-       FROM reviews r, code_list c
-       WHERE r.comm_code = c.comm_cd
-       ORDER BY review_no DESC
-      ) a
-) b
+FROM(   SELECT rownum as rnum
+              , a.*
+         FROM (SELECT r.review_no
+                     ,r.title
+                     ,r.comm_code
+                     ,c.comm_nm as comm_nm
+                     ,r.ticket_no
+                     ,r.culture_no
+                     ,r.poster
+                     ,r.addr
+                     ,r.viewing_date
+                     ,r.review_date
+                     ,r.update_date
+                     ,r.friend
+                     ,r.rating
+                     ,r.review
+                     ,r.photo
+                     ,r.del_yn
+               FROM reviews r, code_list c
+               WHERE r.comm_code = c.comm_cd
+               ORDER BY review_no DESC
+              ) a
+        ) b
 WHERE rnum BETWEEN 1 AND 5;
 
 SELECT *
@@ -365,17 +369,31 @@ AND mem_id = 'testtest'
 GROUP BY EXTRACT(MONTH FROM viewing_date)
 ORDER BY month;
 
+SELECT *
+FROM ticket_books;
 
 -- 티켓북 정보 조회
-SELECT b.mem_id
-     , ROW_NUMBER() OVER(PARTITION BY b.mem_id ORDER BY a.viewing_date DESC) as runm 
-     , a.title
-     , a.viewing_date
-     , a.ticket_img
-     , a.use_yn
-FROM ticket_books a, members b
-WHERE a.mem_id = b.mem_id
-AND a.use_yn = 'Y';
+SELECT scrap_no
+     , mem_id
+     , ROW_NUMBER() OVER(PARTITION BY mem_id ORDER BY viewing_date DESC) as runm 
+     , title
+     , viewing_date
+     , ticket_img
+     , use_yn
+FROM ticket_books 
+WHERE use_yn = 'Y';
+
+-- scrap 정보 수정
+UPDATE ticket_books
+SET title = '0429테스트'
+    , viewing_date ='25/04/29'
+    , ticket_img ='TEST'
+WHERE scrap_no = 2;
+
+-- scrap 정보 삭제
+UPDATE ticket_books
+SET use_yn = 'N'
+WHERE scrap_no = 2;
 
 
 -- ======================
