@@ -109,7 +109,7 @@ CREATE TABLE ticket_books(
     ,mem_id         VARCHAR2(1000)
     ,title          VARCHAR2(1000)
     ,viewing_date   DATE
-    ,ticket_img     VARCHAR2(1000) 
+    ,ticket_img     CLOB
     ,use_yn         VARCHAR2(1)  DEFAULT 'Y'
     ,PRIMARY KEY (scrap_no)
     ,CONSTRAINT fk_img_mem_id  FOREIGN KEY (mem_id)   REFERENCES members(mem_id)
@@ -197,9 +197,9 @@ SET profile_img = 'test'
 WHERE mem_id = 'testtest';
 
 INSERT INTO ticket_books(mem_id, title, viewing_date, ticket_img)
-VALUES('testtest','테스트','25/04/28','test');
+VALUES('test12','테스트','25/04/28','test');
 INSERT INTO ticket_books(mem_id, title, viewing_date, ticket_img)
-VALUES('testtest','테스트','25/04/29','test');
+VALUES('test12','테스트','25/04/29','test');
 
 
 
@@ -375,13 +375,14 @@ FROM ticket_books;
 -- 티켓북 정보 조회
 SELECT scrap_no
      , mem_id
-     , ROW_NUMBER() OVER(PARTITION BY mem_id ORDER BY viewing_date DESC) as runm 
+     , ROW_NUMBER() OVER(PARTITION BY mem_id ORDER BY viewing_date DESC) as rnum 
      , title
      , viewing_date
      , ticket_img
      , use_yn
 FROM ticket_books 
-WHERE use_yn = 'Y';
+WHERE use_yn = 'Y'
+AND mem_id= 'testtest';
 
 -- scrap 정보 수정
 UPDATE ticket_books
@@ -394,6 +395,10 @@ WHERE scrap_no = 2;
 UPDATE ticket_books
 SET use_yn = 'N'
 WHERE scrap_no = 2;
+
+SELECT *
+FROM tb_culture
+WHERE title = '사일런트 스카이';
 
 
 -- ======================
